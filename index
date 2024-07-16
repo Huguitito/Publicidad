@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartelera Digital - Videos de YouTube</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #cartelera {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        #videoYoutube {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="cartelera">
+        <div id="videoYoutube"></div>
+    </div>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        // CONFIGURACIÓN: Edite esta lista para agregar o quitar videos de YouTube
+        const videosYoutube = [
+            'KVouOa5VTTY',  // Reemplace con los IDs de sus videos de YouTube
+            'Fr5pi2UUAxQ',
+            'eeoBaF_4XK4'
+        ];
+
+        let indiceVideoActual = 0;
+        let reproductor;
+
+        function onYouTubeIframeAPIReady() {
+            reproductor = new YT.Player('videoYoutube', {
+                height: '100%',
+                width: '100%',
+                videoId: videosYoutube[indiceVideoActual],
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 1,
+                    'showinfo': 0,
+                    'rel': 0,
+                    'fs': 1,
+                    'playsinline': 0
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+            event.target.setVolume(100); // Establece el volumen al máximo
+            entrarPantallaCompleta();
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) {
+                indiceVideoActual = (indiceVideoActual + 1) % videosYoutube.length;
+                reproductor.loadVideoById(videosYoutube[indiceVideoActual]);
+            }
+        }
+
+        function entrarPantallaCompleta() {
+            const elemento = document.documentElement;
+            if (elemento.requestFullscreen) {
+                elemento.requestFullscreen();
+            } else if (elemento.mozRequestFullScreen) {
+                elemento.mozRequestFullScreen();
+            } else if (elemento.webkitRequestFullscreen) {
+                elemento.webkitRequestFullscreen();
+            } else if (elemento.msRequestFullscreen) {
+                elemento.msRequestFullscreen();
+            }
+        }
+
+        // Intenta entrar en pantalla completa cuando se hace clic en la página
+        document.addEventListener('click', entrarPantallaCompleta);
+    </script>
+</body>
+</html>
